@@ -2,8 +2,12 @@ package pocratpack;
 
 import jooq.tables.Todo;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.SQLDialect;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
+import ratpack.exec.Blocking;
+import ratpack.exec.Promise;
 import ratpack.guice.Guice;
 import ratpack.hikari.HikariModule;
 import ratpack.jackson.Jackson;
@@ -33,7 +37,13 @@ public class App {
                     List<Map<String, Object>> maps = create.select().from(Todo.TODO).fetch().intoMaps();
                     ctx.render(Jackson.json(maps));
                 })
-                .get("foo", ctx -> ctx.render("foo bar"))
+                .get("blocking.get", ctx -> {
+                    DataSource ds = ctx.get(DataSource.class);
+                    DSLContext create = DSL.using(ds, SQLDialect.H2);
+                    SelectJoinStep<Record> from = create.select().from(Todo.TODO);
+                    Promise<List<Map<String, Object>>> promise = Blocking.get(() -> from.fetch().intoMaps());
+                    promise.then(maps -> ctx.render(Jackson.json(maps)));
+                })
             ));
     }
 
