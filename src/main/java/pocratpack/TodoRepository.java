@@ -10,7 +10,6 @@ import ratpack.exec.Promise;
 
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.Map;
 
 public class TodoRepository {
     private final DSLContext create;
@@ -19,7 +18,7 @@ public class TodoRepository {
         this.create = DSL.using(ds, SQLDialect.H2);
     }
 
-    public Promise<List<Map<String, Object>>> getAll() {
+    public Promise<List<TodoModel>> getAll() {
         SelectJoinStep all = create.select().from(Todo.TODO);
         return Blocking.get(() -> all.fetchInto(TodoModel.class));
     }
