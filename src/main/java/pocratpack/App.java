@@ -8,12 +8,14 @@ public class App {
     public static void main(String... args) throws Exception {
         RatpackServer.start(serverSpec -> serverSpec
                 .handlers(chain -> chain
-                        .get(ctx -> {
+                        .all(ctx -> {
                             MutableHeaders headers = ctx.getResponse().getHeaders();
                             headers.set("Access-Control-Allow-Origin", "*");
                             headers.set("Access-Control-Allow-Headers", "x-request-with, origin, content-type, accept");
-                            ctx.getResponse().send();
+                            ctx.next();
                         })
+                        .get(ctx -> ctx.render("Dee Jaa"))
+                        .get("foo", ctx -> ctx.render("foo bar"))
                 ));
     }
 
