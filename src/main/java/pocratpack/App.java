@@ -1,5 +1,6 @@
 package pocratpack;
 
+import ratpack.exec.Promise;
 import ratpack.guice.Guice;
 import ratpack.hikari.HikariModule;
 import ratpack.jackson.Jackson;
@@ -23,6 +24,13 @@ public class App {
                 .get(ctx -> {
                     TodoRepository repository = ctx.get(TodoRepository.class);
                     repository.getAll()
+                        .map(Jackson::json)
+                        .then(ctx::render);
+                })
+                .post(ctx -> {
+                    TodoRepository repository = ctx.get(TodoRepository.class);
+                    Promise<TodoModel> todo = ctx.parse(Jackson.fromJson(TodoModel.class));
+                    todo.flatMap(repository::add)
                         .map(Jackson::json)
                         .then(ctx::render);
                 })
