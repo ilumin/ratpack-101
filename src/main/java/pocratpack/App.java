@@ -1,10 +1,7 @@
 package pocratpack;
 
-import ratpack.exec.Promise;
 import ratpack.guice.Guice;
 import ratpack.hikari.HikariModule;
-import ratpack.http.Response;
-import ratpack.jackson.Jackson;
 import ratpack.server.RatpackServer;
 
 public class App {
@@ -20,32 +17,14 @@ public class App {
                 })
                 .module(TodoModule.class)
                 .bindInstance(new CORSHandler())
+                .bindInstance(new TodoBaseHandler())
+                .bindInstance(new TodoChain())
             ))
             .handlers(chain -> chain
                 .all(CORSHandler.class)
-                .path(ctx -> {
-                    TodoRepository repository = ctx.get(TodoRepository.class);
-                    Response response = ctx.getResponse();
-                    ctx.byMethod(byMethodSpec -> byMethodSpec
-                        .options(() -> {
-                            response.getHeaders().set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, DELETE");
-                            response.send();
-                        })
-                        .get(() -> {
-                            repository.getAll()
-                                .map(Jackson::json)
-                                .then(ctx::render);
-                        })
-                        .post(() -> {
-                            Promise<TodoModel> todo = ctx.parse(Jackson.fromJson(TodoModel.class));
-                            todo.flatMap(repository::add)
-                                .map(Jackson::json)
-                                .then(ctx::render);
-                        })
-                        .delete(() -> repository.deleteAll().then(response::send))
-                    );
-                })
-            ));
+                .insert(TodoChain.class)
+            )
+        );
     }
 
 }
