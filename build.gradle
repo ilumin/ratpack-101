@@ -22,7 +22,7 @@ dependencies {
     compile 'org.jooq:jooq:3.8.1'
 }
 
-mainClassName = 'App'
+mainClassName = 'pocratpack.App'
 
 import org.jooq.util.jaxb.*
 import org.jooq.util.*
