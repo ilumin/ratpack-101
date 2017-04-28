@@ -14,16 +14,14 @@ public class TodoBaseHandler extends InjectionHandler {
                     response.getHeaders().set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, DELETE");
                     response.send();
                 })
-                .get(() -> {
-                    repository.getAll()
-                            .map(Jackson::json)
-                            .then(ctx::render);
-                })
+                .get(() -> repository.getAll()
+                    .map(Jackson::json)
+                    .then(ctx::render))
                 .post(() -> {
                     Promise<TodoModel> todo = ctx.parse(Jackson.fromJson(TodoModel.class));
                     todo.flatMap(repository::add)
-                            .map(Jackson::json)
-                            .then(ctx::render);
+                        .map(Jackson::json)
+                        .then(ctx::render);
                 })
                 .delete(() -> repository.deleteAll().then(response::send))
         );
