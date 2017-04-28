@@ -18,6 +18,7 @@ public class App {
                 .module(TodoModule.class)
                 .bindInstance(new CORSHandler())
                 .bindInstance(new TodoBaseHandler())
+                .bindInstance(new TodoHandler())
                 .bindInstance(new TodoChain())
             ))
             .handlers(chain -> chain

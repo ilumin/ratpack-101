@@ -11,7 +11,7 @@ import ratpack.jackson.JsonRender;
 
 import java.util.Map;
 
-public class Todohandler extends InjectionHandler {
+public class TodoHandler extends InjectionHandler {
     public void handle(Context ctx, TodoRepository repository, String base) throws Exception {
         Long todoId = Long.parseLong(ctx.getPathTokens().get("id"));
 

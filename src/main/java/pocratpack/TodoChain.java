@@ -6,6 +6,8 @@ import ratpack.handling.Chain;
 public class TodoChain implements Action<Chain> {
     @Override
     public void execute(Chain chain) throws Exception {
-        chain.path(TodoBaseHandler.class);
+        chain
+            .path(TodoBaseHandler.class)
+            .path(":id", TodoHandler.class);
     }
 }
